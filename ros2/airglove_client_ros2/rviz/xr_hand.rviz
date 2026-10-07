@@ -1,0 +1,46 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Cell Size: 0.1
+    - Class: rviz_default_plugins/Marker
+      Name: LeftXrHand
+      Enabled: true
+      Topic:
+        Value: /airglove_client/left/xr_hand
+    - Class: rviz_default_plugins/Marker
+      Name: RightXrHand
+      Enabled: true
+      Topic:
+        Value: /airglove_client/right/xr_hand
+  Global Options:
+    Fixed Frame: world
+    Background Color: 255; 255; 255
+    Frame Rate: 60
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/FocusCamera
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Name: Current View
+      Distance: 0.55
+      Focal Point:
+        X: 0.1
+        Y: 0
+        Z: 0
+      Pitch: 0.9
+      Yaw: 3.1416
+      Target Frame: <Fixed Frame>
+Window Geometry:
+  Height: 900
+  Width: 1280
+  Hide Left Dock: true
+  X: 0
+  Y: 0

@@ -1,0 +1,9 @@
+{
+  "name": "com.whatslab.airgloveclient",
+  "version": "0.1.0",
+  "displayName": "AirGlove Client",
+  "description": "AirGlove hand tracking (26 OpenXR hand joints) and finger haptics from the Spine app.",
+  "unity": "2021.3",
+  "author": { "name": "WHATs LAB Corp", "url": "https://github.com/whats-lab/AirGlove-Client" },
+  "license": "Apache-2.0"
+}

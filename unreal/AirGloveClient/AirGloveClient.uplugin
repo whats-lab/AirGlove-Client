@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1.0",
+	"FriendlyName": "AirGloveClient",
+	"Description": "AirGlove hand tracking (26 OpenXR hand joints) and finger haptics from the Spine app, with a Live Link source.",
+	"Category": "Input Devices",
+	"CreatedBy": "WHATs LAB Corp",
+	"CreatedByURL": "https://github.com/whats-lab/AirGlove-Client",
+	"CanContainContent": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "AirGloveClient",
+			"Type": "Runtime",
+			"LoadingPhase": "PostConfigInit",
+			"PlatformAllowList": [ "Win64", "Linux", "Mac" ]
+		}
+	],
+	"Plugins": [
+		{ "Name": "LiveLink", "Enabled": true }
+	]
+}

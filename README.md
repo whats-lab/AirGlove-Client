@@ -10,11 +10,11 @@ AirGlove gloves ── Spine app ── localhost ── libairglove_client ─�
 ## Python
 
 ```bash
-pip install airglove
+pip install airglove-client
 ```
 
 ```python
-from airglove import Client, Side
+from airglove_client import Client, Side
 
 with Client() as client:
     frame = client.hand(Side.RIGHT)

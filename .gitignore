@@ -1,5 +1,7 @@
-python/airglove/_lib/
+python/airglove_client/_lib/
 __pycache__/
 *.egg-info/
 build/
 dist/
+unreal/AirGloveClient/Binaries/
+unreal/AirGloveClient/Intermediate/

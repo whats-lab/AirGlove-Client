@@ -1,7 +1,7 @@
 import argparse
 import time
 
-from airglove import JOINT_NAMES, Client, Side
+from airglove_client import JOINT_NAMES, Client, Side
 
 
 def main():

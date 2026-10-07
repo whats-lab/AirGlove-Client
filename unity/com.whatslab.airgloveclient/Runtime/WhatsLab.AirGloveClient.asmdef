@@ -1,0 +1,9 @@
+{
+  "name": "WhatsLab.AirGloveClient",
+  "rootNamespace": "WhatsLab.AirGloveClient",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "autoReferenced": true
+}
