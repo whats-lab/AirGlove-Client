@@ -17,6 +17,10 @@ public class AirGloveClient : ModuleRules
 		{
 			RuntimeDependencies.Add(Path.Combine(Binaries, "Linux", "libairglove_client.so"));
 		}
+		else if (Target.Platform == UnrealTargetPlatform.LinuxArm64)
+		{
+			RuntimeDependencies.Add(Path.Combine(Binaries, "LinuxArm64", "libairglove_client.so"));
+		}
 		else if (Target.Platform == UnrealTargetPlatform.Win64)
 		{
 			RuntimeDependencies.Add(Path.Combine(Binaries, "Win64", "airglove_client.dll"));

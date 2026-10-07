@@ -14,7 +14,7 @@
 			"Name": "AirGloveClient",
 			"Type": "Runtime",
 			"LoadingPhase": "PostConfigInit",
-			"PlatformAllowList": [ "Win64", "Linux", "Mac" ]
+			"PlatformAllowList": [ "Win64", "Linux", "LinuxArm64", "Mac" ]
 		}
 	],
 	"Plugins": [

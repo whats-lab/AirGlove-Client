@@ -28,6 +28,8 @@ bool FAirGloveClientNative::Load()
 	const FString File = TEXT("Win64/airglove_client.dll");
 #elif PLATFORM_MAC
 	const FString File = TEXT("Mac/libairglove_client.dylib");
+#elif PLATFORM_CPU_ARM_FAMILY
+	const FString File = TEXT("LinuxArm64/libairglove_client.so");
 #else
 	const FString File = TEXT("Linux/libairglove_client.so");
 #endif
