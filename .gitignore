@@ -5,3 +5,4 @@ build/
 dist/
 unreal/AirGloveClient/Binaries/
 unreal/AirGloveClient/Intermediate/
+unity/com.whatslab.airgloveclient/Plugins/*/*/*.so

@@ -32,11 +32,11 @@ Visualization Manager:
       Name: Current View
       Distance: 0.55
       Focal Point:
-        X: 0.1
+        X: 0
         Y: 0
-        Z: 0
-      Pitch: 0.9
-      Yaw: 3.1416
+        Z: -0.08
+      Pitch: 1.2
+      Yaw: 1.5708
       Target Frame: <Fixed Frame>
 Window Geometry:
   Height: 900

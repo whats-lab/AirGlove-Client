@@ -1,0 +1,13 @@
+{
+  "name": "WhatsLab.AirGloveClient.XRHands",
+  "rootNamespace": "WhatsLab.AirGloveClient.XRHands",
+  "references": ["WhatsLab.AirGloveClient", "Unity.XR.Hands", "Unity.XR.CoreUtils"],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "autoReferenced": true,
+  "defineConstraints": ["AIRGLOVE_XR_HANDS"],
+  "versionDefines": [
+    { "name": "com.unity.xr.hands", "expression": "1.4.0", "define": "AIRGLOVE_XR_HANDS" }
+  ]
+}

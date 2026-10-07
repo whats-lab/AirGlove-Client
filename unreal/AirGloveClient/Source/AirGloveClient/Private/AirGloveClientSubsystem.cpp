@@ -100,7 +100,7 @@ bool UAirGloveClientSubsystem::Update()
 	for (int32 Side = 0; Side < 2; ++Side)
 	{
 		int32 Seq = 0;
-		int64 TimeUs = 0;
+		int64_t TimeUs = 0;
 		double Age = 0.0;
 		FAirGloveClientHandPose& Pose = Poses[Side];
 		if (Native->GetHand(Client, Side, Raw, AGC_HAND_FLOATS, Valid, &Seq, &TimeUs, &Age) != AGC_FRESH)
@@ -121,7 +121,17 @@ bool UAirGloveClientSubsystem::Update()
 		}
 		if (bNew && Pose.bTracked && LiveLinkSource)
 		{
-			LiveLinkSource->PushHand(Side, Pose.Joints, FPlatformTime::Seconds());
+			const bool bMirror = GetDefault<UAirGloveClientSettings>()->LiveLinkConvention == EAirGloveClientLiveLinkConvention::MirroredY;
+			TArray<FTransform> LiveLinkJoints;
+			LiveLinkJoints.SetNum(AirGloveClient::JointCount);
+			for (int32 J = 0; J < AirGloveClient::JointCount; ++J)
+			{
+				const float* V = Raw + J * AGC_JOINT_FLOATS;
+				LiveLinkJoints[J] = bMirror
+					? FTransform(FQuat(V[0], -V[1], V[2], -V[3]), FVector(V[4], -V[5], V[6]))
+					: FTransform(FQuat(V[0], V[1], V[2], V[3]), FVector(V[4], V[5], V[6]));
+			}
+			LiveLinkSource->PushHand(Side, LiveLinkJoints, FPlatformTime::Seconds());
 		}
 		bAny = true;
 	}

@@ -4,6 +4,13 @@
 #include "Engine/DeveloperSettings.h"
 #include "AirGloveClientSettings.generated.h"
 
+UENUM()
+enum class EAirGloveClientLiveLinkConvention : uint8
+{
+	OpenXR UMETA(DisplayName = "OpenXR (as received, m)"),
+	MirroredY UMETA(DisplayName = "Imported Meta hand FBX: (x,-y,z) and (x,-y,z,-w), m"),
+};
+
 UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "AirGloveClient"))
 class AIRGLOVECLIENT_API UAirGloveClientSettings : public UDeveloperSettings
 {
@@ -30,6 +37,9 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "Live Link")
 	bool bLiveLink = true;
+
+	UPROPERTY(Config, EditAnywhere, Category = "Live Link")
+	EAirGloveClientLiveLinkConvention LiveLinkConvention = EAirGloveClientLiveLinkConvention::MirroredY;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Live Link")
 	FName LeftSubjectName = TEXT("AirGloveClient_Left");

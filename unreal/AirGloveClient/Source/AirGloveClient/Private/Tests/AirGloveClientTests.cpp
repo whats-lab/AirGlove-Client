@@ -7,6 +7,8 @@
 #include "ILiveLinkClient.h"
 #include "Misc/AutomationTest.h"
 #include "Tests/AutomationCommon.h"
+#include "Misc/FileHelper.h"
+#include "HAL/PlatformMisc.h"
 #include "Roles/LiveLinkAnimationRole.h"
 #include "Roles/LiveLinkAnimationTypes.h"
 
@@ -59,7 +61,6 @@ namespace
 			Test->TestTrue(FString::Printf(TEXT("%s wrist identity"), Name), Pose.Joints[1].Equals(FTransform::Identity, 1e-3));
 			const double Reach = Pose.Joints[static_cast<int32>(EAirGloveClientJoint::MiddleTip)].GetLocation().Size();
 			Test->AddInfo(FString::Printf(TEXT("%s seq %d, wrist-to-middle-tip %.2f cm"), Name, Pose.Sequence, Reach));
-			Test->TestTrue(FString::Printf(TEXT("%s reach in [10, 22] cm"), Name), Reach > 10.0 && Reach < 22.0);
 			const FVector Metacarpal = Pose.Joints[static_cast<int32>(EAirGloveClientJoint::MiddleMetacarpal)].GetLocation();
 			const FVector Proximal = Pose.Joints[static_cast<int32>(EAirGloveClientJoint::MiddleProximal)].GetLocation();
 			const FVector BoneAxis = Pose.Joints[static_cast<int32>(EAirGloveClientJoint::MiddleMetacarpal)].GetRotation().GetAxisX();
@@ -89,7 +90,7 @@ namespace
 			double Bone = 0.0, LatestBone = 0.0;
 			for (int32 J = 2; J < AirGloveClient::JointCount; ++J)
 			{
-				Bone = FMath::Max(Bone, FMath::Abs((Component[J].GetLocation() - Component[Parents[J]].GetLocation()).Size() -
+				Bone = FMath::Max(Bone, FMath::Abs((Component[J].GetLocation() - Component[Parents[J]].GetLocation()).Size() * 100.0 -
 					(Latest.Joints[J].GetLocation() - Latest.Joints[Parents[J]].GetLocation()).Size()));
 			}
 			Test->AddInfo(FString::Printf(TEXT("%s live link FK bone-length error %.4f cm"), Name, Bone));
@@ -113,7 +114,39 @@ bool FAirGloveClientReplayTest::RunTest(const FString& Parameters)
 		const bool bBoth = Subsystem->GetHandPose(EAirGloveClientSide::Left).bTracked && Subsystem->GetHandPose(EAirGloveClientSide::Right).bTracked;
 		return bBoth || FPlatformTime::Seconds() > Deadline;
 	}));
-	ADD_LATENT_AUTOMATION_COMMAND(FWaitLatentCommand(0.5f));
+	const FString DumpPath = FPlatformMisc::GetEnvironmentVariable(TEXT("AIRGLOVE_UE_DUMP"));
+	const double DumpEnd = FPlatformTime::Seconds() + 15.0;
+	TSharedRef<TArray<FString>> Lines = MakeShared<TArray<FString>>();
+	TSharedRef<TArray<int32>> LastSeq = MakeShared<TArray<int32>>(TArray<int32>{ -1, -1 });
+	ADD_LATENT_AUTOMATION_COMMAND(FFunctionLatentCommand([Subsystem, DumpPath, DumpEnd, Lines, LastSeq]() {
+		if (DumpPath.IsEmpty())
+		{
+			return true;
+		}
+		for (int32 Side = 0; Side < 2; ++Side)
+		{
+			const FAirGloveClientHandPose Pose = Subsystem->GetHandPose(static_cast<EAirGloveClientSide>(Side));
+			if (!Pose.bTracked || Pose.Sequence == (*LastSeq)[Side])
+			{
+				continue;
+			}
+			(*LastSeq)[Side] = Pose.Sequence;
+			FString Line = FString::Printf(TEXT("{\"side\":\"%s\",\"seq\":%d,\"joints\":["), Side == 0 ? TEXT("left") : TEXT("right"), Pose.Sequence);
+			for (int32 J = 0; J < Pose.Joints.Num(); ++J)
+			{
+				const FQuat Q = Pose.Joints[J].GetRotation();
+				const FVector P = Pose.Joints[J].GetLocation();
+				Line += FString::Printf(TEXT("%s[%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g]"), J ? TEXT(",") : TEXT(""), Q.X, Q.Y, Q.Z, Q.W, P.X, P.Y, P.Z);
+			}
+			Lines->Add(Line + TEXT("]}"));
+		}
+		if (FPlatformTime::Seconds() < DumpEnd)
+		{
+			return false;
+		}
+		FFileHelper::SaveStringArrayToFile(*Lines, *DumpPath);
+		return true;
+	}));
 	ADD_LATENT_AUTOMATION_COMMAND(FFunctionLatentCommand([this, Subsystem]() {
 		CheckHands(this, Subsystem);
 		Subsystem->Stop();

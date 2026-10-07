@@ -6,7 +6,7 @@ public class AirGloveClient : ModuleRules
 	public AirGloveClient(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-		PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "LiveLinkInterface", "DeveloperSettings" });
+		PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "LiveLinkInterface", "LiveLinkAnimationCore", "DeveloperSettings" });
 		PrivateDependencyModuleNames.AddRange(new[] { "Projects", "LiveLink" });
 
 		string ThirdParty = Path.Combine(ModuleDirectory, "..", "ThirdParty", "AirGloveClient");
