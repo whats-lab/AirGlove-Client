@@ -1,5 +1,9 @@
 # Hand data
 
+The client returns hands in the OpenXR hand-joint convention (`XR_EXT_hand_tracking`: joint order, joint axes,
+radius) **relative to the wrist** instead of in a reference space: the glove measures the fingers, not where the wrist
+is. World pose = your wrist pose × joint pose.
+
 ## Joints
 
 26 joints in OpenXR `XrHandJointEXT` order:
@@ -37,6 +41,7 @@ whatever the IMU reports and is not aligned to anything; use it for tilt, or ali
 | OpenXR / WebXR / ROS (right-handed) | as is | as is |
 | Unity (left-handed, +Y up) | `(x, y, -z)` | `(x, y, -z, -w)` |
 | Unreal (left-handed, +Z up, cm) | `100 × (-z, x, y)` | `(-qz, qx, qy, -qw)` |
+| Unreal Live Link → imported Meta hand FBX bones | `(x, -y, z)` (m) | `(x, -y, z, -w)` |
 
 ## Freshness
 

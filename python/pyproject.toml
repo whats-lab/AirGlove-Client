@@ -10,6 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "Apache-2.0" }
 dependencies = ["numpy"]
+
 authors = [{ name = "WHATs LAB Corp" }]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -17,6 +18,9 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
 ]
+
+[project.optional-dependencies]
+viz = ["viser"]
 
 [project.urls]
 Homepage = "https://github.com/whats-lab/AirGlove-Client"

@@ -10,7 +10,7 @@ from isaaccapture.retargeting_engine.interface import BaseRetargeter, OptionalTy
 from isaaccapture.retargeting_engine.tensor_types import FloatType, HandInput, HandInputIndex
 from isaaccapture.teleop_session_manager import TeleopSession, TeleopSessionConfig
 
-from airglove_client.viz import MetaHand
+from airglove_client.viz import MetaHand, matrix_to_wxyz as _wxyz
 
 SIDES = ("left", "right")
 
@@ -59,21 +59,6 @@ class SkinnedHand:
         for k, bone in enumerate(self.handle.bones):
             bone.wxyz = _wxyz(R[k])
             bone.position = p[k] + self.offset
-
-
-def _wxyz(R):
-    w = np.sqrt(max(0.0, 1.0 + R[0, 0] + R[1, 1] + R[2, 2])) / 2.0
-    if w > 1e-6:
-        return np.array([w, (R[2, 1] - R[1, 2]) / (4 * w), (R[0, 2] - R[2, 0]) / (4 * w), (R[1, 0] - R[0, 1]) / (4 * w)])
-    i = int(np.argmax(np.diag(R)))
-    j, k = (i + 1) % 3, (i + 2) % 3
-    s = np.sqrt(max(0.0, 1.0 + R[i, i] - R[j, j] - R[k, k])) * 2.0
-    q = np.zeros(4)
-    q[1 + i] = s / 4.0
-    q[0] = (R[k, j] - R[j, k]) / s
-    q[1 + j] = (R[j, i] + R[i, j]) / s
-    q[1 + k] = (R[k, i] + R[i, k]) / s
-    return q
 
 
 def main(argv):

@@ -153,3 +153,18 @@ class MetaHand:
         shift = p - np.einsum("nij,nj->ni", M, self.bind_p)
         per_bone = np.einsum("nij,vj->nvi", M, self.vertices) + shift[:, None, :]
         return np.einsum("vn,nvi->vi", self.weights, per_bone)
+
+
+def matrix_to_wxyz(R):
+    w = np.sqrt(max(0.0, 1.0 + R[0, 0] + R[1, 1] + R[2, 2])) / 2.0
+    if w > 1e-6:
+        return np.array([w, (R[2, 1] - R[1, 2]) / (4 * w), (R[0, 2] - R[2, 0]) / (4 * w), (R[1, 0] - R[0, 1]) / (4 * w)])
+    i = int(np.argmax(np.diag(R)))
+    j, k = (i + 1) % 3, (i + 2) % 3
+    s = np.sqrt(max(0.0, 1.0 + R[i, i] - R[j, j] - R[k, k])) * 2.0
+    q = np.zeros(4)
+    q[1 + i] = s / 4.0
+    q[0] = (R[k, j] - R[j, k]) / s
+    q[1 + j] = (R[j, i] + R[i, j]) / s
+    q[1 + k] = (R[k, i] + R[i, k]) / s
+    return q
