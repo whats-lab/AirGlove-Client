@@ -4,6 +4,7 @@
 #include "AirGloveClientSettings.h"
 #include "AnimNode_LiveLinkPose.h"
 #include "Animation/AnimInstanceProxy.h"
+#include "LiveLinkRetargetAsset.h"
 
 namespace
 {
@@ -30,6 +31,7 @@ namespace
 		{
 			FAnimInstanceProxy::PreUpdate(InAnimInstance, DeltaSeconds);
 			Node.PreUpdate(InAnimInstance);
+			CastChecked<UAirGloveClientHandAnimInstance>(InAnimInstance)->RetargetAssetInstance = Node.CurrentRetargetAsset;
 		}
 
 		virtual void UpdateAnimationNode(const FAnimationUpdateContext& InContext) override

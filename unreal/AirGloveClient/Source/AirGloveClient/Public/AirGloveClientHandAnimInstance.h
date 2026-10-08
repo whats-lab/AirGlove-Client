@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "AirGloveClientHandAnimInstance.generated.h"
 
+class ULiveLinkRetargetAsset;
+
 UCLASS(Blueprintable)
 class AIRGLOVECLIENT_API UAirGloveClientHandAnimInstance : public UAnimInstance
 {
@@ -16,6 +18,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AirGloveClient")
 	FName SubjectName;
+
+	UPROPERTY(Transient)
+	TObjectPtr<ULiveLinkRetargetAsset> RetargetAssetInstance;
 
 protected:
 	virtual FAnimInstanceProxy* CreateAnimInstanceProxy() override;
