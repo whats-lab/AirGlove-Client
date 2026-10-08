@@ -14,6 +14,7 @@ struct FAirGloveClientNative
 	decltype(&agc_get_wrist) GetWrist = nullptr;
 	decltype(&agc_get_device_status) GetDeviceStatus = nullptr;
 	decltype(&agc_get_spine_alive) GetSpineAlive = nullptr;
+	decltype(&agc_get_spine_protocol) GetSpineProtocol = nullptr;
 	decltype(&agc_set_haptics) SetHaptics = nullptr;
 	decltype(&agc_get_haptics_result) GetHapticsResult = nullptr;
 	decltype(&agc_poll_alarm) PollAlarm = nullptr;

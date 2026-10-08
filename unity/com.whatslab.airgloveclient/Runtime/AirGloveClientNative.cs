@@ -8,6 +8,7 @@ namespace WhatsLab.AirGloveClient
         private const string Lib = "airglove_client";
 
         public const int AbiVersion = 1;
+        public const int SpineProtocol = 2;
         public const int JointCount = 26;
         public const int JointFloats = 8;
         public const int HandFloats = JointCount * JointFloats;
@@ -23,6 +24,7 @@ namespace WhatsLab.AirGloveClient
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_get_wrist(IntPtr client, int side, [Out] float[] orientationXyzw, out int seq, out long senderTimeUs, out double ageS);
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_get_device_status(IntPtr client, out int left, out int right, out double ageS);
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_get_spine_alive(IntPtr client, out double ageS);
+        [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_get_spine_protocol(IntPtr client, out int version, out double ageS);
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_set_haptics(IntPtr client, int side, int[] strengths, int count);
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_get_haptics_result(IntPtr client, int side, out int success, out double ageS);
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_poll_alarm(IntPtr client, byte[] code, int capacity, out int side);

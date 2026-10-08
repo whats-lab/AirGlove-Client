@@ -36,6 +36,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AirGloveClient")
 	bool GetDeviceStatus(bool& bLeftConnected, bool& bRightConnected) const;
 
+	UFUNCTION(BlueprintPure, Category = "AirGloveClient")
+	bool GetSpineProtocol(int32& Version, float& AgeSeconds) const;
+
 	UFUNCTION(BlueprintCallable, Category = "AirGloveClient")
 	bool SetHaptics(EAirGloveClientSide Side, const TArray<int32>& Strengths);
 

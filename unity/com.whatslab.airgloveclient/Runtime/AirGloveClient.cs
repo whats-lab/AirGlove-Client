@@ -35,6 +35,7 @@ namespace WhatsLab.AirGloveClient
     {
         public const int JointCount = AirGloveClientNative.JointCount;
         public const int FingerCount = AirGloveClientNative.FingerCount;
+        public const int SpineProtocol = AirGloveClientNative.SpineProtocol;
 
         public static readonly string[] JointNames =
         {
@@ -92,9 +93,18 @@ namespace WhatsLab.AirGloveClient
             return rc == AirGloveClientNative.Fresh;
         }
 
+        public bool TryGetSpineProtocol(out int version, out double ageSeconds)
+        {
+            int rc = AirGloveClientNative.agc_get_spine_protocol(_handle, out version, out ageSeconds);
+            if (rc < 0) throw Error();
+            return rc == AirGloveClientNative.Fresh;
+        }
+
         public void SetHaptics(HandSide side, IReadOnlyList<int> strengths)
         {
-            var values = new int[Math.Min(strengths.Count, FingerCount)];
+            if (strengths == null || strengths.Count != FingerCount)
+                throw new ArgumentException($"SetHaptics needs {FingerCount} strengths (thumb .. pinky)", nameof(strengths));
+            var values = new int[FingerCount];
             for (int i = 0; i < values.Length; i++) values[i] = strengths[i];
             if (AirGloveClientNative.agc_set_haptics(_handle, (int)side, values, values.Length) < 0) throw Error();
         }

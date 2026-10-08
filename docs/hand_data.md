@@ -50,5 +50,7 @@ out-of-order samples and recovers on its own when the sender restarts.
 
 ## Haptics
 
-`set_haptics(side, [thumb, index, middle, ring, pinky])`, each 0 (off), 1 (weak), 2 (medium), 3 (strong). The glove
-keeps vibrating until you send zeros. `haptics_result(side)` reports whether the last request was applied.
+`set_haptics(side, [thumb, index, middle, ring, pinky])` — exactly 5 values, each 0 (off), 1 (weak), 2 (medium),
+3 (strong). The glove keeps vibrating until you send zeros, or until Spine has not heard the client's heartbeat for
+3 s, when Spine turns the haptics off. `haptics_result(side)` reports whether the last request was applied (`False`
+when that hand's glove is not connected or still busy with the previous command).

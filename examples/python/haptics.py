@@ -10,11 +10,12 @@ def main():
     parser.add_argument("--strength", type=int, nargs=5, default=[2, 2, 2, 2, 2], metavar="S",
                         help="thumb index middle ring pinky, 0 (off) .. 3 (strong)")
     parser.add_argument("--duration", type=float, default=1.0)
-    parser.add_argument("--port", type=int, default=4040)
+    parser.add_argument("--port", type=int, default=4040, help="UDP port this client listens on")
+    parser.add_argument("--spine-port", type=int, default=4042, help="UDP port Spine receives on")
     args = parser.parse_args()
     side = Side[args.side.upper()]
 
-    with Client(listen_port=args.port) as client:
+    with Client(listen_port=args.port, spine_port=args.spine_port) as client:
         client.set_haptics(side, args.strength)
         time.sleep(0.3)
         print("result:", client.haptics_result(side))

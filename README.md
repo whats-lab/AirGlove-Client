@@ -18,6 +18,12 @@ AirGlove gloves ── Spine app ──(localhost)── airglove_client ── 
 The Spine app must be running with hand output enabled, on the same machine. The client listens on UDP 4040 and
 talks to Spine on 4042; only one client per machine can listen on 4040.
 
+**Compatibility:** airglove_client 0.3.0 speaks Spine OSC protocol **v2** and needs a Spine release that implements it.
+Older Spine builds (protocol v1, a message-type string in front of every message) are not supported, and 0.1.x
+clients do not work with a v2 Spine. The client sends a heartbeat every second; `spine_protocol()` (Python),
+`TryGetSpineProtocol` (Unity), `GetSpineProtocol` (Unreal) and `agc_get_spine_protocol` (C) report the version from
+Spine's last reply (`2`), or nothing when Spine does not answer.
+
 ## Hand data
 
 Each hand is 26 joints in OpenXR `XrHandJointEXT` order, each a pose plus a radius, **relative to the wrist**
@@ -49,8 +55,9 @@ Platforms: linux-x64, linux-arm64, windows-x64, windows-arm64, macos-universal. 
 
 ## Haptics
 
-`set_haptics(side, [thumb, index, middle, ring, pinky])`, each 0 (off), 1 (weak), 2 (medium), 3 (strong). The glove
-keeps vibrating until you send zeros.
+`set_haptics(side, [thumb, index, middle, ring, pinky])` — exactly 5 values, each 0 (off), 1 (weak), 2 (medium),
+3 (strong); any other count is rejected. The glove keeps vibrating until you send zeros, or until Spine has not heard
+the client's heartbeat for 3 s (the client exited or hung), when Spine turns the haptics off.
 
 ## License
 

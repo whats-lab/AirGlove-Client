@@ -26,14 +26,15 @@ class HandView:
 
 def main():
     parser = argparse.ArgumentParser(description="Show AirGlove hands as Meta OpenXR hand meshes in the browser")
-    parser.add_argument("--port", type=int, default=4040)
+    parser.add_argument("--port", type=int, default=4040, help="UDP port this client listens on")
+    parser.add_argument("--spine-port", type=int, default=4042, help="UDP port Spine receives on")
     parser.add_argument("--viewer-port", type=int, default=8080)
     args = parser.parse_args()
 
     server = viser.ViserServer(port=args.viewer_port)
     server.scene.set_up_direction("+y")
     views = {Side.LEFT: HandView(server, Side.LEFT, (-0.12, 0, 0)), Side.RIGHT: HandView(server, Side.RIGHT, (0.12, 0, 0))}
-    with Client(listen_port=args.port) as client:
+    with Client(listen_port=args.port, spine_port=args.spine_port) as client:
         print(f"open http://localhost:{args.viewer_port}")
         while True:
             for side, view in views.items():

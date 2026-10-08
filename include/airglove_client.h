@@ -18,6 +18,7 @@ extern "C" {
 #endif
 
 #define AGC_ABI_VERSION 1
+#define AGC_SPINE_PROTOCOL 2
 
 #define AGC_LEFT 0
 #define AGC_RIGHT 1
@@ -48,6 +49,7 @@ AGC_API int agc_get_wrist(agc_client* client, int side, float* orientation_xyzw,
 
 AGC_API int agc_get_device_status(agc_client* client, int* left_connected, int* right_connected, double* age_s);
 AGC_API int agc_get_spine_alive(agc_client* client, double* age_s);
+AGC_API int agc_get_spine_protocol(agc_client* client, int* version, double* age_s);
 
 AGC_API int agc_set_haptics(agc_client* client, int side, const int* strengths, int count);
 AGC_API int agc_request_haptics(agc_client* client, int side);

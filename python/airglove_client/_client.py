@@ -4,7 +4,7 @@ from enum import IntEnum
 
 import numpy as np
 
-from ._native import lib
+from ._native import SPINE_PROTOCOL, lib
 
 JOINT_COUNT = 26
 FINGER_COUNT = 5
@@ -135,8 +135,17 @@ class Client:
             raise _error()
         return age.value if rc else None
 
+    def spine_protocol(self):
+        version, age = ctypes.c_int(), ctypes.c_double()
+        rc = self._lib.agc_get_spine_protocol(self._handle, ctypes.byref(version), ctypes.byref(age))
+        if rc < 0:
+            raise _error()
+        return (version.value, age.value) if rc else None
+
     def set_haptics(self, side, strengths):
-        values = list(strengths)
+        values = [int(v) for v in strengths]
+        if len(values) != FINGER_COUNT:
+            raise ValueError(f"set_haptics needs {FINGER_COUNT} strengths (thumb .. pinky), got {len(values)}")
         array = (ctypes.c_int * len(values))(*values)
         if self._lib.agc_set_haptics(self._handle, _side(side), array, len(values)) < 0:
             raise _error()

@@ -175,14 +175,36 @@ bool UAirGloveClientSubsystem::GetDeviceStatus(bool& bLeftConnected, bool& bRigh
 	return true;
 }
 
-bool UAirGloveClientSubsystem::SetHaptics(EAirGloveClientSide Side, const TArray<int32>& Strengths)
+bool UAirGloveClientSubsystem::GetSpineProtocol(int32& Version, float& AgeSeconds) const
 {
-	if (!Client || Strengths.Num() == 0)
+	int32 V = 0;
+	double Age = 0.0;
+	if (!Client || FAirGloveClientNative::Get()->GetSpineProtocol(Client, &V, &Age) != AGC_FRESH)
 	{
 		return false;
 	}
-	const int32 Count = FMath::Min(Strengths.Num(), AirGloveClient::FingerCount);
-	return FAirGloveClientNative::Get()->SetHaptics(Client, static_cast<int32>(Side), Strengths.GetData(), Count) == AGC_OK;
+	Version = V;
+	AgeSeconds = static_cast<float>(Age);
+	return true;
+}
+
+bool UAirGloveClientSubsystem::SetHaptics(EAirGloveClientSide Side, const TArray<int32>& Strengths)
+{
+	if (!Client)
+	{
+		return false;
+	}
+	if (Strengths.Num() != AirGloveClient::FingerCount)
+	{
+		UE_LOG(LogAirGloveClient, Warning, TEXT("SetHaptics needs %d strengths (thumb .. pinky), got %d"), AirGloveClient::FingerCount, Strengths.Num());
+		return false;
+	}
+	if (FAirGloveClientNative::Get()->SetHaptics(Client, static_cast<int32>(Side), Strengths.GetData(), Strengths.Num()) != AGC_OK)
+	{
+		UE_LOG(LogAirGloveClient, Warning, TEXT("SetHaptics: %s"), *FAirGloveClientNative::Get()->Error());
+		return false;
+	}
+	return true;
 }
 
 bool UAirGloveClientSubsystem::GetHapticsResult(EAirGloveClientSide Side, bool& bSuccess) const

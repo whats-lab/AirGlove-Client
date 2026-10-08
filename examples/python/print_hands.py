@@ -1,18 +1,24 @@
 import argparse
 import time
 
-from airglove_client import JOINT_NAMES, Client, Side
+from airglove_client import JOINT_NAMES, SPINE_PROTOCOL, Client, Side
 
 
 def main():
     parser = argparse.ArgumentParser(description="Print AirGlove hand joints received from Spine")
-    parser.add_argument("--port", type=int, default=4040)
+    parser.add_argument("--port", type=int, default=4040, help="UDP port this client listens on")
+    parser.add_argument("--spine-port", type=int, default=4042, help="UDP port Spine receives on")
     parser.add_argument("--rate", type=float, default=2.0)
     args = parser.parse_args()
 
-    with Client(listen_port=args.port) as client:
+    with Client(listen_port=args.port, spine_port=args.spine_port) as client:
         print(f"airglove client {Client.version()} listening on UDP {args.port}")
         while True:
+            spine = client.spine_protocol()
+            if spine is None or spine[1] > 2.0:
+                print("spine: no heartbeat reply")
+            elif spine[0] != SPINE_PROTOCOL:
+                print(f"spine: protocol {spine[0]}, this client speaks {SPINE_PROTOCOL}")
             status = client.device_status()
             if status:
                 print(f"glove connected: left={status.left_connected} right={status.right_connected}")

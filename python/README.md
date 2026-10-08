@@ -3,6 +3,9 @@
 Receive AirGlove hand tracking — 26 OpenXR hand joints per hand, wrist-relative — from the Spine app and send finger
 haptics. The wheel bundles the native library for linux-x64/arm64, windows-x64/arm64 and macOS.
 
+Needs a Spine that speaks OSC protocol v2 (`airglove_client.SPINE_PROTOCOL`); older Spine builds (protocol v1) are not
+supported. Set `AIRGLOVE_CLIENT_LIBRARY` to use another build of the native library.
+
 ```bash
 pip install airglove-client          # client
 pip install "airglove-client[viz]"   # + browser hand viewer (viser)
@@ -24,8 +27,10 @@ with Client() as client:                       # UDP 4040, Spine requests on 404
 | `hand(side)` | `HandFrame`: `orientations (26,4)` xyzw, `positions (26,3)` m, `radii (26,)`, `valid (26,)`, `seq`, `age_s` — or `None` |
 | `wrist(side)` | glove IMU wrist orientation (world, +Y up, unaligned heading) — or `None` |
 | `device_status()` | `left_connected`, `right_connected` |
-| `set_haptics(side, [5 × 0..3])`, `haptics_result(side)` | send / last result |
-| `alarms()` | device alarms since the last call (`RESTART`, `ATLAS_DEVICE_ERROR`) |
+| `spine_protocol()` | `(version, age_s)` from Spine's last heartbeat reply (`2`) — or `None` before the first |
+| `spine_alive_age()` | seconds since Spine's last heartbeat reply — or `None` |
+| `set_haptics(side, [5 × 0..3])`, `haptics_result(side)` | send exactly 5 strengths (else `ValueError`) / last result |
+| `alarms()` | device alarms since the last call: `code` (`RESTART`, `ATLAS_DEVICE_ERROR`), `side` (`Side`, or `None` when Spine names neither hand) |
 | `stats()` | datagram counters |
 
 `airglove_client.viz.MetaHand` skins the Meta OpenXR hand mesh from a `HandFrame` (numpy only).

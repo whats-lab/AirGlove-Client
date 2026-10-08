@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "0.1.0",
+	"Version": 3,
+	"VersionName": "0.3.0",
 	"FriendlyName": "AirGloveClient",
 	"Description": "AirGlove hand tracking (26 OpenXR hand joints) and finger haptics from the Spine app, with a Live Link source.",
 	"Category": "Input Devices",
