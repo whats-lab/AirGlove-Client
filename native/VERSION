@@ -1,2 +1,1 @@
-linux-x64: AirGlove-Client-Core 0.4.0 eed7eb5 (local Release build, glibc 2.38+)
-linux-arm64, macos-universal, windows-x64, windows-arm64: AirGlove-Client-Core a5ebe2c (CI run 37599263789, library 0.1.0; does not speak protocol 3, replace with the Core v0.4.0 CI release)
+AirGlove-Client-Core v0.4.0 2ca89bd (CI run 38219740566)
