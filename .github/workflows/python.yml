@@ -50,6 +50,8 @@ jobs:
           with Client(listen_port=47640, spine_port=47642) as client:
               assert client.hand(Side.LEFT) is None
               client.set_haptics(Side.RIGHT, [0, 1, 2, 3, 0])
+              client.set_pair(2)
+              assert client.pair == 2
               print(platform.system(), platform.machine(), "airglove_client", Client.version(), client.stats())
           PY
 

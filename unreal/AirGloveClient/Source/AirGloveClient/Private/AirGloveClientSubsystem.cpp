@@ -17,6 +17,7 @@ void UAirGloveClientSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		Pose.Radii.Init(1.f, AirGloveClient::JointCount);
 		Pose.Valid.Init(false, AirGloveClient::JointCount);
 	}
+	Pair = GetDefault<UAirGloveClientSettings>()->Pair;
 	if (GetDefault<UAirGloveClientSettings>()->bAutoStart && !IsRunningCommandlet())
 	{
 		Start();
@@ -48,7 +49,12 @@ bool UAirGloveClientSubsystem::Start()
 		UE_LOG(LogAirGloveClient, Error, TEXT("cannot start: %s"), *Native->Error());
 		return false;
 	}
-	Native->SetStaleThreshold(Client, Settings->StaleSeconds);
+	if (!SetPair(Pair))
+	{
+		Native->Destroy(Client);
+		Client = nullptr;
+		return false;
+	}
 	if (Settings->bLiveLink && IModularFeatures::Get().IsModularFeatureAvailable(ILiveLinkClient::ModularFeatureName))
 	{
 		ILiveLinkClient& LiveLink = IModularFeatures::Get().GetModularFeature<ILiveLinkClient>(ILiveLinkClient::ModularFeatureName);
@@ -56,8 +62,8 @@ bool UAirGloveClientSubsystem::Start()
 		LiveLink.AddSource(LiveLinkSource);
 	}
 	TickHandle = FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UAirGloveClientSubsystem::Tick));
-	UE_LOG(LogAirGloveClient, Log, TEXT("listening on %s:%d, Spine %s:%d"), *Settings->ListenAddress, Settings->ListenPort,
-		*Settings->SpineAddress, Settings->SpinePort);
+	UE_LOG(LogAirGloveClient, Log, TEXT("listening on %s:%d, Spine %s:%d, pair %d"), *Settings->ListenAddress, Settings->ListenPort,
+		*Settings->SpineAddress, Settings->SpinePort, Pair);
 	return true;
 }
 
@@ -158,7 +164,7 @@ bool UAirGloveClientSubsystem::GetWristOrientation(EAirGloveClientSide Side, FQu
 	{
 		return false;
 	}
-	Orientation = AirGloveClient::ToUnrealRotation(Q[0], Q[1], Q[2], Q[3]);
+	Orientation = FQuat(Q[0], Q[1], Q[2], Q[3]);
 	AgeSeconds = static_cast<float>(Age);
 	return true;
 }
@@ -185,6 +191,22 @@ bool UAirGloveClientSubsystem::GetSpineProtocol(int32& Version, float& AgeSecond
 	}
 	Version = V;
 	AgeSeconds = static_cast<float>(Age);
+	return true;
+}
+
+bool UAirGloveClientSubsystem::SetPair(int32 NewPair)
+{
+	if (NewPair < 1)
+	{
+		UE_LOG(LogAirGloveClient, Warning, TEXT("SetPair: pair must be 1 or more, got %d"), NewPair);
+		return false;
+	}
+	if (Client && FAirGloveClientNative::Get()->SetPair(Client, NewPair) != AGC_OK)
+	{
+		UE_LOG(LogAirGloveClient, Warning, TEXT("SetPair: %s"), *FAirGloveClientNative::Get()->Error());
+		return false;
+	}
+	Pair = NewPair;
 	return true;
 }
 

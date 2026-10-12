@@ -8,7 +8,8 @@ namespace WhatsLab.AirGloveClient
         private const string Lib = "airglove_client";
 
         public const int AbiVersion = 1;
-        public const int SpineProtocol = 2;
+        public const int SpineProtocol = 3;
+        public const int DefaultPair = 1;
         public const int JointCount = 26;
         public const int JointFloats = 8;
         public const int HandFloats = JointCount * JointFloats;
@@ -29,6 +30,7 @@ namespace WhatsLab.AirGloveClient
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_get_haptics_result(IntPtr client, int side, out int success, out double ageS);
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_poll_alarm(IntPtr client, byte[] code, int capacity, out int side);
         [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern void agc_set_stale_threshold(IntPtr client, double seconds);
+        [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)] public static extern int agc_set_pair(IntPtr client, int pair);
 
         public static string Str(IntPtr p) => p == IntPtr.Zero ? string.Empty : Marshal.PtrToStringAnsi(p) ?? string.Empty;
     }

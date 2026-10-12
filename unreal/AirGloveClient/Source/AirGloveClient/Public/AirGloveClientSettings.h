@@ -32,6 +32,9 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "Connection")
 	int32 SpinePort = 4042;
 
+	UPROPERTY(Config, EditAnywhere, Category = "Connection", meta = (ClampMin = "1"))
+	int32 Pair = 1;
+
 	UPROPERTY(Config, EditAnywhere, Category = "Connection", meta = (ClampMin = "0.01"))
 	float StaleSeconds = 0.2f;
 

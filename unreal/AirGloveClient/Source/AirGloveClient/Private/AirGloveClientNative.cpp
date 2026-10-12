@@ -60,7 +60,7 @@ bool FAirGloveClientNative::Load()
 	AGC_RESOLVE(SetHaptics, agc_set_haptics)
 	AGC_RESOLVE(GetHapticsResult, agc_get_haptics_result)
 	AGC_RESOLVE(PollAlarm, agc_poll_alarm)
-	AGC_RESOLVE(SetStaleThreshold, agc_set_stale_threshold)
+	AGC_RESOLVE(SetPair, agc_set_pair)
 #undef AGC_RESOLVE
 	if (AbiVersion() != AGC_ABI_VERSION)
 	{

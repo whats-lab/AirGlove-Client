@@ -18,7 +18,8 @@ extern "C" {
 #endif
 
 #define AGC_ABI_VERSION 1
-#define AGC_SPINE_PROTOCOL 2
+#define AGC_SPINE_PROTOCOL 3
+#define AGC_DEFAULT_PAIR 1
 
 #define AGC_LEFT 0
 #define AGC_RIGHT 1
@@ -59,6 +60,7 @@ AGC_API int agc_get_haptics_result(agc_client* client, int side, int* success, d
 AGC_API int agc_poll_alarm(agc_client* client, char* code, int code_capacity, int* side);
 
 AGC_API void agc_set_stale_threshold(agc_client* client, double seconds);
+AGC_API int agc_set_pair(agc_client* client, int pair);
 AGC_API void agc_get_stats(agc_client* client, uint64_t* datagrams, uint64_t* malformed, uint64_t* dropped_seq);
 
 #ifdef __cplusplus

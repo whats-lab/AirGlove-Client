@@ -18,11 +18,22 @@ AirGlove gloves ── Spine app ──(localhost)── airglove_client ── 
 The Spine app must be running with hand output enabled, on the same machine. The client listens on UDP 4040 and
 talks to Spine on 4042; only one client per machine can listen on 4040.
 
-**Compatibility:** airglove_client 0.3.0 speaks Spine OSC protocol **v2** and needs a Spine release that implements it.
-Older Spine builds (protocol v1, a message-type string in front of every message) are not supported, and 0.1.x
-clients do not work with a v2 Spine. The client sends a heartbeat every second; `spine_protocol()` (Python),
+**Compatibility:** airglove_client 0.4.0 speaks Spine's current OSC format — every message starts with its message
+number, hand and device messages carry a `/pair/N` address prefix — reported as protocol **3**. It needs a Spine
+release that sends this format; earlier Spine builds (protocol v2 and v1) do not interoperate with 0.4.0, and 0.3.x and
+older clients do not work with the new Spine. The client sends a heartbeat every second; `spine_protocol()` (Python),
 `TryGetSpineProtocol` (Unity), `GetSpineProtocol` (Unreal) and `agc_get_spine_protocol` (C) report the version from
-Spine's last reply (`2`), or nothing when Spine does not answer.
+Spine's last reply (`3`), or nothing when Spine does not answer.
+
+**Pair:** the client talks to one Spine pair (default 1; Spine currently has only pair 1, both gloves). Choose another
+with `Client(pair=N)` / `set_pair(N)` (Python), the `pair` constructor argument / `SetPair` (Unity, `AirGloveHandProvider.Pair`
+for XR Hands), the *Pair* setting / `SetPair` (Unreal) or `agc_set_pair` (C). Changing the pair forgets the hand,
+wrist, device status and haptics state received for the old one.
+
+**Sequence and time:** Spine no longer sends a sequence number or a send time. `seq` is the client's count of joint
+frames received for that hand (1, 2, …; the wrist has its own counter) and `sender_time_us` is the time the client
+received the datagram (Unix epoch µs). `dropped_seq` in the stats is always 0 and the stale threshold setting
+(`set_stale_threshold`, `SetStaleThreshold`, `agc_set_stale_threshold`) has no effect.
 
 ## Hand data
 
@@ -31,6 +42,11 @@ Each hand is 26 joints in OpenXR `XrHandJointEXT` order, each a pose plus a radi
 back of the hand, right-handed, metres. Place the hand in your world with your own wrist pose (headset hand
 tracking, a controller, a tracker). Engine integrations convert to their own space. Details, joint table and
 engine conversions: [docs/hand_data.md](docs/hand_data.md).
+
+**Wrist value:** `wrist()` / `TryGetWrist` / `GetWristOrientation` / `agc_get_wrist` return the glove's **raw back-of-hand
+IMU quaternion** as Spine sends it — the sensor's wxyz reordered to `[y, x, z, -w]`, passed through unchanged. It is
+not a wrist pose in any world or engine frame (and Unreal no longer converts it to Unreal axes); do not use it to place
+the hand without your own sensor-to-world alignment.
 
 ## C / C++
 

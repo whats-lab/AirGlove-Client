@@ -8,11 +8,12 @@ def main():
     parser = argparse.ArgumentParser(description="Print AirGlove hand joints received from Spine")
     parser.add_argument("--port", type=int, default=4040, help="UDP port this client listens on")
     parser.add_argument("--spine-port", type=int, default=4042, help="UDP port Spine receives on")
+    parser.add_argument("--pair", type=int, default=1, help="Spine pair number (/pair/N)")
     parser.add_argument("--rate", type=float, default=2.0)
     args = parser.parse_args()
 
-    with Client(listen_port=args.port, spine_port=args.spine_port) as client:
-        print(f"airglove client {Client.version()} listening on UDP {args.port}")
+    with Client(listen_port=args.port, spine_port=args.spine_port, pair=args.pair) as client:
+        print(f"airglove client {Client.version()} listening on UDP {args.port}, pair {client.pair}")
         while True:
             spine = client.spine_protocol()
             if spine is None or spine[1] > 2.0:
@@ -31,6 +32,9 @@ def main():
                 x, y, z = frame.positions[tip]
                 print(f"{side.name.lower():5s}: seq={frame.seq} age={frame.age_s * 1000:.0f}ms "
                       f"index_tip=({x:+.3f}, {y:+.3f}, {z:+.3f}) m")
+                wrist = client.wrist(side)
+                if wrist is not None:
+                    print(f"{'':5s}  dorsum sensor raw [y, x, z, -w] = {[round(float(v), 3) for v in wrist.orientation]}")
             for alarm in client.alarms():
                 print(f"alarm: {alarm.code} ({alarm.side.name.lower() if alarm.side is not None else '-'})")
             time.sleep(1.0 / args.rate)

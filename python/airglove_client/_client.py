@@ -4,7 +4,7 @@ from enum import IntEnum
 
 import numpy as np
 
-from ._native import SPINE_PROTOCOL, lib
+from ._native import DEFAULT_PAIR, SPINE_PROTOCOL, lib
 
 JOINT_COUNT = 26
 FINGER_COUNT = 5
@@ -71,12 +71,20 @@ def _error():
 
 
 class Client:
-    def __init__(self, listen_address="127.0.0.1", listen_port=4040, spine_address="127.0.0.1", spine_port=4042):
+    def __init__(self, listen_address="127.0.0.1", listen_port=4040, spine_address="127.0.0.1", spine_port=4042,
+                 pair=DEFAULT_PAIR):
         self._lib = lib()
         handle = self._lib.agc_create(listen_address.encode(), listen_port, spine_address.encode(), spine_port)
         if not handle:
             raise _error()
         self._handle = ctypes.c_void_p(handle)
+        self._pair = DEFAULT_PAIR
+        if pair != DEFAULT_PAIR:
+            try:
+                self.set_pair(pair)
+            except Exception:
+                self.close()
+                raise
         self._joints = (ctypes.c_float * (JOINT_COUNT * 8))()
         self._valid = (ctypes.c_uint8 * JOINT_COUNT)()
 
@@ -174,6 +182,17 @@ class Client:
         while self._lib.agc_poll_alarm(self._handle, code, len(code), ctypes.byref(side)) == 1:
             out.append(Alarm(code.value.decode(errors="replace"), Side(side.value) if side.value >= 0 else None))
         return out
+
+    def set_pair(self, pair):
+        if isinstance(pair, bool) or not isinstance(pair, int):
+            raise TypeError(f"pair must be an int, got {type(pair).__name__}")
+        if self._lib.agc_set_pair(self._handle, pair) < 0:
+            raise _error()
+        self._pair = pair
+
+    @property
+    def pair(self):
+        return self._pair
 
     def set_stale_threshold(self, seconds):
         self._lib.agc_set_stale_threshold(self._handle, float(seconds))

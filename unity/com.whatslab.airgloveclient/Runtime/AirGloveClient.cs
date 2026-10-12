@@ -36,6 +36,7 @@ namespace WhatsLab.AirGloveClient
         public const int JointCount = AirGloveClientNative.JointCount;
         public const int FingerCount = AirGloveClientNative.FingerCount;
         public const int SpineProtocol = AirGloveClientNative.SpineProtocol;
+        public const int DefaultPair = AirGloveClientNative.DefaultPair;
 
         public static readonly string[] JointNames =
         {
@@ -55,7 +56,7 @@ namespace WhatsLab.AirGloveClient
         private IntPtr _handle;
         private readonly byte[] _valid = new byte[AirGloveClientNative.JointCount];
 
-        public AirGloveClient(string listenAddress = "127.0.0.1", int listenPort = 4040, string spineAddress = "127.0.0.1", int spinePort = 4042)
+        public AirGloveClient(string listenAddress = "127.0.0.1", int listenPort = 4040, string spineAddress = "127.0.0.1", int spinePort = 4042, int pair = DefaultPair)
         {
             int abi = AirGloveClientNative.agc_abi_version();
             if (abi != AirGloveClientNative.AbiVersion)
@@ -63,6 +64,11 @@ namespace WhatsLab.AirGloveClient
             _handle = AirGloveClientNative.agc_create(listenAddress, listenPort, spineAddress, spinePort);
             if (_handle == IntPtr.Zero)
                 throw new AirGloveClientException(AirGloveClientNative.Str(AirGloveClientNative.agc_last_error()));
+            if (pair != DefaultPair)
+            {
+                try { SetPair(pair); }
+                catch { Dispose(); throw; }
+            }
         }
 
         public static string Version => AirGloveClientNative.Str(AirGloveClientNative.agc_version());
@@ -127,6 +133,15 @@ namespace WhatsLab.AirGloveClient
             }
         }
 
+        public int Pair { get; private set; } = DefaultPair;
+
+        public void SetPair(int pair)
+        {
+            if (AirGloveClientNative.agc_set_pair(_handle, pair) < 0) throw Error();
+            Pair = pair;
+        }
+
+        [Obsolete("No effect since airglove_client 0.4.0")]
         public void SetStaleThreshold(double seconds) => AirGloveClientNative.agc_set_stale_threshold(_handle, seconds);
 
         private static AirGloveClientException Error() => new AirGloveClientException(AirGloveClientNative.Str(AirGloveClientNative.agc_last_error()));

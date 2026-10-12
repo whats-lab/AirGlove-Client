@@ -18,7 +18,7 @@ struct FAirGloveClientNative
 	decltype(&agc_set_haptics) SetHaptics = nullptr;
 	decltype(&agc_get_haptics_result) GetHapticsResult = nullptr;
 	decltype(&agc_poll_alarm) PollAlarm = nullptr;
-	decltype(&agc_set_stale_threshold) SetStaleThreshold = nullptr;
+	decltype(&agc_set_pair) SetPair = nullptr;
 
 	static const FAirGloveClientNative* Get();
 	FString Error() const;

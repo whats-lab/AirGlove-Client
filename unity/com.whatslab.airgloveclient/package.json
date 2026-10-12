@@ -1,6 +1,6 @@
 {
   "name": "com.whatslab.airgloveclient",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "displayName": "AirGlove Client",
   "description": "AirGlove hand tracking (26 OpenXR hand joints) and finger haptics from the Spine app.",
   "unity": "2021.3",

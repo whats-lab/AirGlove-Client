@@ -23,7 +23,7 @@ is. World pose = your wrist pose × joint pose.
 Each joint is `[qx, qy, qz, qw, px, py, pz, radius]` (C layout: 26 × 8 floats).
 
 - Relative to the wrist: `wrist` is the identity. Place the hand in your world with your own wrist pose (headset hand
-  tracking, a controller, a tracker), or with the glove's wrist IMU orientation below.
+  tracking, a controller, a tracker).
 - OpenXR hand-joint axes for both hands: −Z along the bone towards the fingertip, +Y on the back of the hand,
   X = Y × Z. Right-handed, metres.
 - `radius` is the joint radius in metres (for capsule colliders or rendering).
@@ -31,8 +31,11 @@ Each joint is `[qx, qy, qz, qw, px, py, pz, radius]` (C layout: 26 × 8 floats).
 
 ## Wrist orientation
 
-The glove's IMU wrist orientation `[qx, qy, qz, qw]` in a world frame with +Y up. The heading (rotation about +Y) is
-whatever the IMU reports and is not aligned to anything; use it for tilt, or align it yourself.
+**Not a world wrist pose.** Since airglove_client 0.4.0 the wrist value is the raw quaternion of the glove's
+back-of-hand (dorsum) IMU exactly as Spine sends it: the sensor's `[w, x, y, z]` reordered to `[y, x, z, -w]`, not
+normalised and not converted to OpenXR or engine axes (Unreal's `GetWristOrientation` returns these four values as
+`FQuat(X, Y, Z, W)` without conversion). Its frame is the IMU's own; it arrives on every raw glove frame, independently
+of the joints. Use it only together with your own sensor-to-world alignment.
 
 ## Engines
 
@@ -45,8 +48,9 @@ whatever the IMU reports and is not aligned to anything; use it for tilt, or ali
 
 ## Freshness
 
-Every read returns the age of the sample. Treat a hand as lost when it is older than about 0.2 s; the client drops
-out-of-order samples and recovers on its own when the sender restarts.
+Every read returns the age of the sample. Treat a hand as lost when it is older than about 0.2 s. `seq` counts the
+frames this client received for that hand and `sender_time_us` is when it received them (Unix epoch µs); Spine sends
+neither, so there is no reordering or loss detection.
 
 ## Haptics
 

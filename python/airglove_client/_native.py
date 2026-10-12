@@ -5,7 +5,8 @@ import sys
 from pathlib import Path
 
 ABI_VERSION = 1
-SPINE_PROTOCOL = 2
+SPINE_PROTOCOL = 3
+DEFAULT_PAIR = 1
 
 
 def _platform_dir():
@@ -54,13 +55,14 @@ def _bind(lib):
         "agc_get_haptics_result": (c_int, [handle, c_int, p_int, p_double]),
         "agc_poll_alarm": (c_int, [handle, ctypes.c_char_p, c_int, p_int]),
         "agc_set_stale_threshold": (None, [handle, c_double]),
+        "agc_set_pair": (c_int, [handle, c_int]),
         "agc_get_stats": (None, [handle, p_u64, p_u64, p_u64]),
     }
     for name, (restype, argtypes) in signatures.items():
         try:
             fn = getattr(lib, name)
         except AttributeError:
-            raise OSError(f"AirGlove client library lacks {name}; this package needs airglove_client 0.3.0 or newer") from None
+            raise OSError(f"AirGlove client library lacks {name}; this package needs airglove_client 0.4.0 or newer") from None
         fn.restype = restype
         fn.argtypes = argtypes
     return lib

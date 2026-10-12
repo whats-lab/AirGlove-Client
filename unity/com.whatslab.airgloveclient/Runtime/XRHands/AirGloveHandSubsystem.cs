@@ -28,6 +28,7 @@ namespace WhatsLab.AirGloveClient.XRHands
         public static int ListenPort = 4040;
         public static string SpineAddress = "127.0.0.1";
         public static int SpinePort = 4042;
+        public static int Pair = AirGloveClient.DefaultPair;
         public static float StaleSeconds = 0.2f;
         public static Pose LeftRoot = new Pose(new Vector3(-0.12f, 1.2f, 0.35f), Quaternion.identity);
         public static Pose RightRoot = new Pose(new Vector3(0.12f, 1.2f, 0.35f), Quaternion.identity);
@@ -39,8 +40,7 @@ namespace WhatsLab.AirGloveClient.XRHands
         public override void Start()
         {
             if (Client != null) return;
-            Client = new AirGloveClient(ListenAddress, ListenPort, SpineAddress, SpinePort);
-            Client.SetStaleThreshold(StaleSeconds);
+            Client = new AirGloveClient(ListenAddress, ListenPort, SpineAddress, SpinePort, Pair);
         }
 
         public override void Stop()
