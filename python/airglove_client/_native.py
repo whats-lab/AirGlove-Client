@@ -62,7 +62,7 @@ def _bind(lib):
         try:
             fn = getattr(lib, name)
         except AttributeError:
-            raise OSError(f"AirGlove client library lacks {name}; this package needs airglove_client 0.4.0 or newer") from None
+            raise OSError(f"AirGlove client library lacks {name}; this package needs airglove_client 1.0.0 or newer") from None
         fn.restype = restype
         fn.argtypes = argtypes
     return lib
