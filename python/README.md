@@ -8,8 +8,8 @@ Needs a Spine that sends its current OSC format (message-number header, `/pair/N
 `AIRGLOVE_CLIENT_LIBRARY` to use another build of the native library.
 
 ```bash
-pip install airglove-client          # client
-pip install "airglove-client[viz]"   # + browser hand viewer (viser)
+pip install "airglove-client @ git+https://github.com/whats-lab/AirGlove-Client.git@v1.0.0#subdirectory=python"        # client
+pip install "airglove-client[viz] @ git+https://github.com/whats-lab/AirGlove-Client.git@v1.0.0#subdirectory=python"   # + browser hand viewer (viser)
 ```
 
 ```python

@@ -9,7 +9,7 @@ AirGlove gloves ── Spine app ──(localhost)── airglove_client ── 
 
 | Use | Install | Guide |
 |---|---|---|
-| Python | `pip install airglove-client` | [python/README.md](python/README.md) |
+| Python | `pip install "airglove-client @ git+https://github.com/whats-lab/AirGlove-Client.git@v1.0.0#subdirectory=python"` | [python/README.md](python/README.md) |
 | Unity 2021.3+ / Unity 6 | Package Manager → *Add package from git URL* → `https://github.com/whats-lab/AirGlove-Client.git?path=/unity/com.whatslab.airgloveclient` | [unity/…/README.md](unity/com.whatslab.airgloveclient/README.md) |
 | Unreal Engine 5 | copy `unreal/AirGloveClient` into your project's `Plugins/` | [unreal/AirGloveClient/README.md](unreal/AirGloveClient/README.md) |
 | C / C++ | `include/airglove_client.h` + `native/<platform>/` | [below](#c--c) |
@@ -18,9 +18,9 @@ AirGlove gloves ── Spine app ──(localhost)── airglove_client ── 
 The Spine app must be running with hand output enabled, on the same machine. The client listens on UDP 4040 and
 talks to Spine on 4042; only one client per machine can listen on 4040.
 
-**Compatibility:** airglove_client 0.4.0 speaks Spine's current OSC format — every message starts with its message
+**Compatibility:** airglove_client 1.0.0 speaks Spine's current OSC format — every message starts with its message
 number, hand and device messages carry a `/pair/N` address prefix — reported as protocol **3**. It needs a Spine
-release that sends this format; earlier Spine builds (protocol v2 and v1) do not interoperate with 0.4.0, and 0.3.x and
+release that sends this format; earlier Spine builds (protocol v2 and v1) do not interoperate with 1.0.0, and 0.3.x and
 older clients do not work with the new Spine. The client sends a heartbeat every second; `spine_protocol()` (Python),
 `TryGetSpineProtocol` (Unity), `GetSpineProtocol` (Unreal) and `agc_get_spine_protocol` (C) report the version from
 Spine's last reply (`3`), or nothing when Spine does not answer.
